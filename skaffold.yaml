@@ -1,0 +1,11 @@
+# skaffold.yaml
+# This file defines the deployment configuration for Cloud Deploy.
+# It tells Cloud Deploy where to find the Kubernetes/Cloud Run manifests.
+
+apiVersion: skaffold/v4beta7 # Use the latest stable Skaffold API version
+kind: Config
+manifests:
+  rawYaml:
+    # Point to your Cloud Run service definition file.
+    # Ensure this path is correct relative to your skaffold.yaml.
+    - path: cloudrun.yaml

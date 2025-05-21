@@ -33,7 +33,7 @@ steps:
     - '--region=us-central1'
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
 
 substitutions:
   _SERVICE_NAME: sales-predictor-service

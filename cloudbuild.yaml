@@ -3,31 +3,22 @@
 
 steps:
 # Step 1: Build the Docker image
-# This step uses the Docker builder to build your application's Docker image.
-# The image is tagged with the commit SHA for unique identification.
 - name: 'gcr.io/cloud-builders/docker'
   id: 'Build Docker image'
   args:
     - 'build'
     - '-t'
     - 'us-central1-docker.pkg.dev/$PROJECT_ID/ml-sales-prediction/sales-predictor:$SHORT_SHA'
-    - '.' # Build context is the current directory
-
+    - '.'
+  
 # Step 2: Push the Docker image to Artifact Registry
-# This step pushes the built Docker image to your Artifact Registry repository.
 - name: 'gcr.io/cloud-builders/docker'
   id: 'Push to Artifact Registry'
   args:
     - 'push'
     - 'us-central1-docker.pkg.dev/$PROJECT_ID/ml-sales-prediction/sales-predictor:$SHORT_SHA'
 
-# Step 3 (NEW): Trigger a Cloud Deploy release
-# This step replaces the direct Cloud Run deployment.
-# It uses the Cloud SDK builder to call the gcloud deploy command.
-# A new release is created in the specified delivery pipeline.
-# The '--images' flag maps the logical service name (from _SERVICE_NAME) to the
-# actual image path in Artifact Registry, allowing Cloud Deploy to know which
-# image to deploy to the 'dev' target.
+# Step 3: Trigger a Cloud Deploy release (without --target-renders)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Trigger Cloud Deploy Release'
   entrypoint: 'gcloud'
@@ -35,27 +26,14 @@ steps:
     - 'deploy'
     - 'releases'
     - 'create'
-    - 'sales-predictor-release-$BUILD_ID' # Creates a unique release name using the Cloud Build ID
-    - '--delivery-pipeline=sales-predictor-pipeline' # Name of your Cloud Deploy pipeline
-    - '--target-renders=dev' # Specifies that the 'dev' target is rendered by this release
-    # Map the Cloud Run service name (from _SERVICE_NAME) to the image path
+    - 'sales-predictor-release-$BUILD_ID'
+    - '--delivery-pipeline=sales-predictor-pipeline'
+    # Removed: - '--target-renders=dev' <-- This line was causing the error
     - '--images=${_SERVICE_NAME}=us-central1-docker.pkg.dev/$PROJECT_ID/ml-sales-prediction/sales-predictor:$SHORT_SHA'
-    - '--region=us-central1' # Region where your Cloud Deploy pipeline is located
-
-# --- Old 'Deploy to Cloud Run' step (commented out) ---
-# - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#   id: 'Deploy to Cloud Run'
-#   entrypoint: 'gcloud'
-#   args:
-#     - 'run', 'deploy', '${_SERVICE_NAME}',
-#     - '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/ml-sales-prediction/sales-predictor:$SHORT_SHA',
-#     - '--region', 'us-central1',
-#     - '--platform', 'managed',
-#     - '--allow-unauthenticated',
-#     - '--set-env-vars', 'VERSION=$SHORT_SHA'
+    - '--region=us-central1'
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
-  _SERVICE_NAME: sales-predictor-service # This substitution is used for both Cloud Run and Cloud Deploy image mapping
+  _SERVICE_NAME: sales-predictor-service

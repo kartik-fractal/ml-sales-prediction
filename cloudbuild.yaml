@@ -37,3 +37,4 @@ options:
 
 substitutions:
   _SERVICE_NAME: sales-predictor-service
+  

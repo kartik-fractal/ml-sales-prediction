@@ -6,5 +6,6 @@ kind: Config
 manifests: # This section defines the manifests
   rawYaml: # This specifies that they are raw YAML files
     - cloudrun.yaml # Points to your Cloud Run service definition
-deploy: # This section defines how to deploy them
-  kubectl: {} # Empty kubectl deployer, as manifests are defined above
+# Removed:
+# deploy:
+#   kubectl: {}

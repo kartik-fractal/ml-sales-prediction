@@ -26,7 +26,7 @@ steps:
     - 'deploy'
     - 'releases'
     - 'create'
-    - 'sales-predictor-release-$BUILD_ID'
+    - 'sales-predictor-release-$SHORT_SHA'
     - '--delivery-pipeline=sales-predictor-pipeline'
     # Removed: - '--target-renders=dev' <-- This line was causing the error
     - '--images=${_SERVICE_NAME}=us-central1-docker.pkg.dev/$PROJECT_ID/ml-sales-prediction/sales-predictor:$SHORT_SHA'
@@ -37,4 +37,4 @@ options:
 
 substitutions:
   _SERVICE_NAME: sales-predictor-service
-  
+

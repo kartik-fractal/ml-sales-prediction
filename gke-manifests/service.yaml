@@ -1,0 +1,15 @@
+# gke-manifests/service.yaml
+# Defines the Kubernetes Service to expose your ML Sales Prediction app.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sales-predictor-service # Name of your service
+spec:
+  selector:
+    app: sales-predictor-app # Matches the label in your deployment
+  type: LoadBalancer # Exposes the service externally using a LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80 # External port (e.g., what you'll access)
+      targetPort: 8080 # Internal container port

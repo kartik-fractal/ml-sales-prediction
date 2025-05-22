@@ -4,25 +4,18 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  # The name of your Cloud Run service.
-  # This should match the _SERVICE_NAME substitution in your cloudbuild.yaml.
+  # IMPORTANT: This name MUST exactly match the _SERVICE_NAME substitution
+  # in your cloudbuild.yaml and the left side of the --images flag.
   name: sales-predictor-service
 spec:
   template:
     metadata:
-      # Annotations for Cloud Run features, if needed.
-      # For example, to allow unauthenticated access:
       annotations:
         run.googleapis.com/ingress: "all" # Allows public access
     spec:
       containers:
       - # Cloud Deploy will inject the image here from your cloudbuild.yaml's --images flag.
-        # You can put a placeholder image here, or leave it empty if Cloud Deploy handles it.
-        # For simplicity, we'll leave it empty as --images will populate it.
+        # You can leave this empty, or put a placeholder. Cloud Deploy will override it.
         image:
         ports:
         - containerPort: 8080 # Your Flask app runs on port 8080
-        # Add any environment variables here if needed, e.g.:
-        # env:
-        # - name: VERSION
-        #   value: "1.0"
